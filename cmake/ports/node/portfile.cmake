@@ -23,6 +23,14 @@ elseif (APPLE)
         SHA512 TODO
         FILENAME node-install-18.14.2-macOSXSDK10.14-macos-amd64-release.tar.xz
     )
+elseif(UNIX AND DEFINED ENV{CI})
+    # Download a prebuild version for CI build
+    vcpkg_download_distfile(
+        NODE_SOURCE_ARCHIVE
+        URLS "${EXTERNAL_BUILD_ASSETS}/dependencies/node/node-install-18.14.2-ubuntu-18.04-amd64-release.tar.xz"
+        SHA512 ff5ca5c27b811d20ac524346ee122bcd72e9e85c6de6f4799f620bb95dac959ce910cc5bb2162ed741a7f65043aa78173ecd2ce5b92f5a4d91ecb07ce71fa560
+        FILENAME node-install-18.14.2-ubuntu-18.04-amd64-release.tar.xz
+    )
 else ()
     # else Linux desktop
     vcpkg_from_github(
