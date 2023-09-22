@@ -12,13 +12,16 @@ include_hifi_library_headers(shared)
 include_hifi_library_headers(networking)
 include_hifi_library_headers(script-engine)
 
-if (ANDROID)
-else ()
+if (NOT ANDROID)
   target_webrtc()
 endif ()
 
 # append audio includes to our list of includes to bubble
 target_include_directories(${TARGET_NAME} PUBLIC "${HIFI_LIBRARY_DIR}/audio/src")
+
+if (WIN32)
+  target_compile_definitions(${TARGET_NAME} PRIVATE WIN32)
+endif()
 
 # have CMake grab externals for us
 if (APPLE)
