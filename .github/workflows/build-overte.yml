@@ -7,11 +7,16 @@ jobs:
   build-gcc:
     name: Linux build on Ubuntu
     runs-on: ubuntu-latest
+    env:
+      SCCACHE_GHA_ENABLED: "true"
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: false
           fetch-depth: 1
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.3
 
       - name: Cache conan
         id: cache-conan
@@ -72,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset conan-release
+        run: cmake --preset conan-release -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         shell: bash
 
       - name: Build
@@ -86,6 +91,7 @@ jobs:
     runs-on: windows-2019
     env:
       BUILD_TOOLS_PATH: C:\apps\build-tools\
+      SCCACHE_GHA_ENABLED: "true"
     steps:
       - run: echo $env:BUILD_TOOLS_PATH | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
@@ -97,6 +103,9 @@ jobs:
       - name: Install Build tools
         run: git clone https://git.anotherfoxguy.com/AnotherFoxGuy/build-tools.git %BUILD_TOOLS_PATH%
         shell: cmd
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.3
 
       - name: Install Qt5
         uses: jurplel/install-qt-action@v3.3.0
