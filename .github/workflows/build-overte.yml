@@ -133,7 +133,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.12.1
 
       - name: Configure
-        run: cmake --preset conan-release
+        run: cmake --preset conan-release -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         shell: cmd
 
       - name: Build
