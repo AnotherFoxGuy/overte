@@ -7,7 +7,10 @@ class WebRTCConan(ConanFile):
     name = "libwebrtc-bin"
     version = "120.6099.1.1"
     settings = "os", "arch"
-    build_requires = "7zip/23.01"
+
+    def build_requirements(self):
+        if self.settings.os == "Windows": 
+            self.tool_requires("7zip/23.01")
 
     def build(self):
         # https://github.com/crow-misia/libwebrtc-bin/releases/download/120.6099.1.1/libwebrtc-win-x64.7z
@@ -29,7 +32,11 @@ class WebRTCConan(ConanFile):
             get(self, url)
 
     def package(self):
-        _folder = "debug" if self.settings.os == "Windows" else "release"
+        if self.settings.os == "Windows": 
+            _folder = "debug" if self.settings.os == "Windows" else "release"
+        else: 
+            _folder = "lib"
+       
         copy(
             self,
             "*.h",
