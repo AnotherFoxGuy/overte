@@ -67,7 +67,7 @@ class Overte(ConanFile):
         self.requires("onetbb/2021.10.0")
         self.requires("v-hacd/4.1.0")
         self.requires("vulkan-memory-allocator/3.0.1")
-        # webrtc
+        self.requires("libwebrtc-bin/120.6099.1.1@overte/stable")
         self.requires("zlib/1.2.13")
 
     def generate(self):
