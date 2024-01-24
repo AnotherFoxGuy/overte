@@ -15,23 +15,18 @@ jobs:
         with:
           submodules: true
 
-      - name: Install Qt5
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          cache: true
-          cache-key-prefix: windows-QtCache
-          modules: qtwebengine
-
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1.12.1
 
       - name: Build
         run: |
-          cmake -G"NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release .
-          jom interface
+          mkdir b 
+          cd b
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
+          ninja interface
 
       - name: Upload redist folder
         uses: actions/upload-artifact@v3
         with:
           name: interface
-          path: interface
+          path: b/interface
