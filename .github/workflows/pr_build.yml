@@ -41,6 +41,9 @@ env:
   # Ensure XZ always runs with muticore support
   XZ_OPT: -T0
 
+  # Enable sccache on PR builds
+  SCCACHE_GHA_ENABLED: "true"
+
 jobs:
   build_pr:
     name: "${{matrix.os}}, ${{matrix.arch}}"
@@ -204,6 +207,15 @@ jobs:
           sudo apt-get -t bullseye-backports install -y cmake
         fi
 
+    - name: Configure sccache
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.4
 
     - name: Override NSIS
       shell: pwsh
@@ -222,7 +234,7 @@ jobs:
     - name: Configure CMake
       working-directory: build
       shell: bash
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DVCPKG_BUILD_TYPE=release $CMAKE_EXTRA
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DVCPKG_BUILD_TYPE=release $CMAKE_EXTRA
 
     - name: Compress cmake logs
       if: always()
