@@ -77,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset conan-release
+        run: cmake --preset conan-release -DSONAR_SCAN=ON
         shell: bash
 
       - name: Run build-wrapper
