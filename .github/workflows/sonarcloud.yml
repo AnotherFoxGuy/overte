@@ -1,0 +1,91 @@
+name: sonarcloud scan
+on:
+  push:
+    branches:
+      - master
+      - sonarcloud
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: sonarcloud scan
+    runs-on: ubuntu-latest
+    env:
+      CONAN_SYSREQUIRES_MODE: "enabled"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install sonar-scanner and build-wrapper
+        uses: sonarsource/sonarcloud-github-c-cpp@v2
+        id: sonarscan
+
+      - name: Download and set up sonar-scanner
+        run: |
+          wget -nv https://cdn.anotherfoxguy.com/sonar-scanner/overte -O run-sonar-scanner
+          sudo chmod 777 run-sonar-scanner
+
+      - name: Cache conan
+        id: cache-conan
+        uses: actions/cache@v4
+        with:
+          key: conan-ubuntu-${{ hashFiles('conanfile.py') }}
+          restore-keys: |
+            conan-ubuntu-
+          path: ~/.conan2/
+
+      - name: Install dependencies
+        run: |
+          curl "https://raw.githubusercontent.com/AnotherFoxGuy/ci-scripts/main/install-conan.sh" | sudo bash
+          sudo apt-get update
+          sudo apt-get -y install \
+                  pkg-config \
+                  ninja-build \
+                  qtbase5-dev \
+                  qtbase5-private-dev \
+                  qtwebengine5-dev \
+                  qtwebengine5-dev-tools \
+                  qtmultimedia5-dev \
+                  libqt5opengl5-dev \
+                  qtscript5-dev \
+                  libqt5scripttools5 \
+                  libqt5webchannel5-dev \
+                  libqt5websockets5-dev \
+                  qtxmlpatterns5-dev-tools \
+                  qttools5-dev \
+                  libqt5xmlpatterns5-dev \
+                  libqt5svg5-dev \
+                  qml-module-qtwebchannel \
+                  qml-module-qtquick-controls \
+                  qml-module-qtquick-controls2 \
+                  qml-module-qt-labs-settings \
+                  qml-module-qtquick-dialogs \
+                  qml-module-qtwebengine
+
+      - name: Install conan pkgs
+        run: |
+          conan profile detect --force
+          echo "tools.system.package_manager:mode = install" > ~/.conan2/global.conf
+          echo "tools.system.package_manager:sudo = True" >> ~/.conan2/global.conf
+          conan remote add overte https://git.anotherfoxguy.com/api/packages/overte/conan -f
+          conan install . \
+            -s build_type=Release \
+            -b missing \
+            -pr:b=default \
+            -of build
+          conan cache clean "*" -sbd
+        shell: bash
+
+      - name: Configure
+        run: cmake --preset conan-release
+        shell: bash
+
+      - name: Run build-wrapper
+        run: build-wrapper-linux-x86-64 --out-dir bw-output make -j4
+
+      - name: Run sonar-scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_SCANNER_EXE: ${{ steps.sonarscan.outputs.sonar-scanner-binary }}
+        run: ./run-sonar-scanner
