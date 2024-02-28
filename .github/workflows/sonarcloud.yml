@@ -72,8 +72,7 @@ jobs:
           conan install . \
             -s build_type=Release \
             -b missing \
-            -pr:b=default \
-            -of build
+            -pr:b=default
           conan cache clean "*" -sbd
         shell: bash
 
