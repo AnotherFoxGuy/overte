@@ -77,11 +77,8 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: cmake --preset conan-release -DSONAR_SCAN=ON
+        run: cmake --preset conan-release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         shell: bash
-
-      - name: Run build-wrapper
-        run: build-wrapper-linux-x86-64 --out-dir bw-output make -j4
 
       - name: Run sonar-scanner
         env:
