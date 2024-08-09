@@ -75,7 +75,7 @@ class Overte(ConanFile):
         self.requires("zlib/1.2.13")
 
         self.requires("glm/0.9.9.5", force=True)
-        self.requires("openssl/3.2.1", force=True)
+        self.requires("openssl/system", force=True)
 
         if self.settings.os == "Windows":
             self.requires("neuron/12.2@overte/prebuild")
