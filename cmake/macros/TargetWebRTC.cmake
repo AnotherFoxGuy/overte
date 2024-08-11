@@ -17,7 +17,27 @@ macro(TARGET_WEBRTC)
         # WebRTC is basically impossible to build on aarch64 Linux.
         # I am looking at https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing for an alternative.
     else()
-        find_package(WebRTC REQUIRED)
-        target_link_libraries(${TARGET_NAME} WebRTC::WebRTC)
+        find_package(absl REQUIRED)
+        add_library(abseil::abseil INTERFACE IMPORTED)
+        set_property(TARGET abseil::abseil PROPERTY INTERFACE_LINK_LIBRARIES    
+            absl::algorithm_container
+            absl::bind_front
+            absl::config
+            absl::core_headers
+            absl::flat_hash_map
+            absl::inlined_vector
+            absl::flags
+            absl::flags_parse
+            absl::flags_usage
+            absl::memory
+            absl::optional
+            absl::strings
+            absl::synchronization
+            absl::type_traits
+            absl::variant
+        )
+
+        find_package(tg_owt REQUIRED)
+        target_link_libraries(${TARGET_NAME} tg_owt::tg_owt)
     endif()
 endmacro()

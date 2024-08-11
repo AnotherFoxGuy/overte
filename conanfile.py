@@ -73,9 +73,12 @@ class Overte(ConanFile):
         self.requires("v-hacd/4.1.0")
         self.requires("vulkan-memory-allocator/3.0.1")
         self.requires("zlib/1.2.13")
+        self.requires("tg_owt/2024.08@overte/stable")
 
         self.requires("glm/0.9.9.5", force=True)
-        self.requires("openssl/system@overte/stable", force=True)
+
+        if self.settings.os == "Linux":
+            self.requires("openssl/system@overte/test2", force=True)
 
         if self.settings.os == "Windows":
             self.requires("neuron/12.2@overte/prebuild")
@@ -90,8 +93,8 @@ class Overte(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
-        if not self.options.with_webrtc:
-            tc.variables["DISABLE_WEBRTC"] = "ON"
+        # if not self.options.with_webrtc:
+        #     tc.variables["DISABLE_WEBRTC"] = "ON"
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
