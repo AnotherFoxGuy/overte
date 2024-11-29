@@ -25,7 +25,6 @@ float atof_locale_independent(char* str);
 
 #include "cgltf.h"
 
-
 class GLTFSerializer : public QObject, public HFMSerializer {
     Q_OBJECT
 public:
@@ -58,6 +57,21 @@ private:
 
     void setHFMMaterial(HFMMaterial& hfmMat, const cgltf_material& material);
     HFMTexture getHFMTexture(const cgltf_texture *texture);
+
+    bool findNodeInPointerArray(const cgltf_node* nodePointer, cgltf_node** nodes, size_t arraySize, size_t& index);
+
+    bool findAttribute(const QString& name, const cgltf_attribute* attributes, size_t numAttributes, size_t& index);
+
+    template <typename T>
+    bool findPointerInArray(const T* pointer, const T* array, size_t arraySize, size_t& index) {
+        for (size_t i = 0; i < arraySize; i++) {
+            if (&array[i] == pointer) {
+                index = i;
+                return true;
+            }
+        }
+        return false;
+    }
 };
 
 #endif // hifi_GLTFSerializer_h
