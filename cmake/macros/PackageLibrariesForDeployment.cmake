@@ -40,7 +40,7 @@ macro(PACKAGE_LIBRARIES_FOR_DEPLOYMENT)
             COMMAND ${CMAKE_COMMAND}
             -DBUNDLE_EXECUTABLE="$<TARGET_FILE:${TARGET_NAME}>"
             -DBUNDLE_PLUGIN_DIR="$<TARGET_FILE_DIR:${TARGET_NAME}>/${PLUGIN_PATH}"
-            -DLIB_PATHS="${CMAKE_BINARY_DIR}/conanlibs/$<CONFIGURATION>"
+            -DLIB_PATHS="${CONAN_EX_LIB_DIR}/$<CONFIGURATION>"
             -P "${CMAKE_SOURCE_DIR}/cmake/FixupBundlePostBuild.cmake"
     )
 endmacro()

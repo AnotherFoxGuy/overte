@@ -92,6 +92,12 @@ class Overte(ConanFile):
     def generate(self):
         tc = CMakeToolchain(self)
         tc.variables["DISABLE_WEBRTC"] = "OFF" if self.options.with_webrtc else "ON"
+        tc.variables["GLSLANG_DIR"] = self.get_path(self.dependencies["glslang"].cpp_info.bindirs)
+        # tc.cache_variables["GLSLANG_DIR"] = self.get_path(self.dependencies["glslang"].cpp_info.bindirs)
+        tc.variables["SCRIBE_DIR"] = self.dependencies["scribe"].package_folder.replace("\\", "/") + "/tools"
+        tc.variables["SPIRV_CROSS_DIR"] = self.get_path(self.dependencies["spirv-cross"].cpp_info.bindirs)
+        tc.variables["SPIRV_TOOLS_DIR"] = self.get_path(self.dependencies["spirv-tools"].cpp_info.bindirs)
+        tc.variables["CONAN_EX_LIB_DIR"] = os.path.join(self.build_folder, "external_libs", f"{self.settings.build_type}").replace("\\", "/")
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
@@ -105,34 +111,16 @@ class Overte(ConanFile):
             for f in dep.cpp_info.libdirs:
                 self.cp_libs(f)
 
-        toolspath = """
-        set(GLSLANG_DIR "%s")
-        set(SCRIBE_DIR "%s/tools")
-        set(SPIRV_CROSS_DIR "%s")
-        set(SPIRV_TOOLS_DIR "%s")
-        """ % (
-            ";".join(self.dependencies["glslang"].cpp_info.bindirs).replace("\\", "/"),
-            self.dependencies["scribe"].package_folder.replace("\\", "/"),
-            ";".join(self.dependencies["spirv-cross"].cpp_info.bindirs).replace(
-                "\\", "/"
-            ),
-            ";".join(self.dependencies["spirv-tools"].cpp_info.bindirs).replace(
-                "\\", "/"
-            ),
-        )
-        save(
-            self,
-            os.path.join(self.build_folder, "cmake", "ConanToolsDirs.cmake"),
-            toolspath,
-        )
+    def get_path(self, path):
+        return ";".join(path).replace("\\", "/")
 
     def cp_libs(self, src):
         bindir = os.path.join(
-            self.build_folder, "conanlibs", f"{self.settings.build_type}"
+            self.build_folder, "external_libs", f"{self.settings.build_type}"
         )
         copy(self, "*.dll", src, bindir, False)
         copy(self, "*.so*", src, bindir, False)
         if self.settings.build_type == "Release":
-            bindir = os.path.join(self.build_folder, "conanlibs", "RelWithDebInfo")
+            bindir = os.path.join(self.build_folder, "external_libs", "RelWithDebInfo")
             copy(self, "*.dll", src, bindir, False)
             copy(self, "*.so*", src, bindir, False)

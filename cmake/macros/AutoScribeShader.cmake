@@ -380,8 +380,6 @@ macro(AUTOSCRIBE_SHADER_LIB)
 endmacro()
 
 macro(AUTOSCRIBE_SHADER_LIBS)
-    include(${CMAKE_BINARY_DIR}/cmake/ConanToolsDirs.cmake)
-
     message(STATUS "Shader processing start")
     set(AUTOSCRIBE_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/headers)
     # Start the shader IDs
