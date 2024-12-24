@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo rm -rf $ANDROID_SDK_ROOT
           curl "https://raw.githubusercontent.com/AnotherFoxGuy/ci-scripts/main/install-conan.sh" | sudo bash
           sudo apt-get update
           sudo apt-get -y install \
@@ -75,7 +76,7 @@ jobs:
 
   build-msvc:
     name: Windows build
-    runs-on: windows-2019
+    runs-on: windows-latest
     env:
       BUILD_TOOLS_PATH: C:\apps\build-tools\
     steps:
@@ -116,12 +117,13 @@ jobs:
         run: cmake . -GNinja -DCMAKE_BUILD_TYPE=Release -Bbuild -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=cmake/conan_provider.cmake
         shell: cmd
 
+      - name: Clean conan pkgs
+        run: conan cache clean "*" -sbd
+        shell: cmd
+
       - name: Build
         run: | 
           cd build
           ninja
         shell: cmd
 
-      - name: Clean conan pkgs
-        run: conan cache clean "*" -sbd
-        shell: cmd
