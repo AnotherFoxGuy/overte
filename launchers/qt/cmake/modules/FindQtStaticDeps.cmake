@@ -3,24 +3,24 @@ set(qt_static_lib_dependices
   "qtpcre2"
   "qtlibpng"
   "qtfreetype"
-  "Qt5AccessibilitySupport"
-  "Qt5FbSupport"
-  "Qt5OpenGLExtensions"
-  "Qt5QuickTemplates2"
-  "Qt5FontDatabaseSupport"
-  "Qt5ThemeSupport"
-  "Qt5EventDispatcherSupport")
+  "Qt6AccessibilitySupport"
+  "Qt6FbSupport"
+  "Qt6OpenGLExtensions"
+  "Qt6QuickTemplates2"
+  "Qt6FontDatabaseSupport"
+  "Qt6ThemeSupport"
+  "Qt6EventDispatcherSupport")
 
 if (WIN32)
 elseif(APPLE)
   set(qt_static_lib_dependices
     ${qt_static_lib_dependices}
-    "Qt5GraphicsSupport"
-    "Qt5CglSupport"
-    "Qt5ClipboardSupport")
+    "Qt6GraphicsSupport"
+    "Qt6CglSupport"
+    "Qt6ClipboardSupport")
 endif()
 
-set(LIBS_PREFIX "${_qt5Core_install_prefix}/lib/")
+set(LIBS_PREFIX "${_Qt6Core_install_prefix}/lib/")
 foreach (_qt_static_dep ${qt_static_lib_dependices})
   if (WIN32)
     set(lib_path "${LIBS_PREFIX}${_qt_static_dep}.lib")

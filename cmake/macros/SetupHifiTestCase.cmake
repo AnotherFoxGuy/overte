@@ -9,7 +9,7 @@
 
 # Sets up a hifi testcase using QtTest.
 # Can be called with arguments; like setup_hifi_project, the arguments correspond to qt modules, so call it
-# via setup_hifi_testcase(Script Network Qml) to build the testcase with Qt5Script, Qt5Network, and Qt5Qml linked,
+# via setup_hifi_testcase(Script Network Qml) to build the testcase with Qt6Script, Qt6Network, and Qt6Qml linked,
 # for example.
 
 # One special quirk of this is that because we are creating multiple testcase targets (instead of just one),
@@ -105,13 +105,13 @@ macro(SETUP_HIFI_TESTCASE)
 
         set(${TARGET_NAME}_DEPENDENCY_QT_MODULES ${ARGN})
   
-        list(APPEND ${TARGET_NAME}_DEPENDENCY_QT_MODULES Core Test)
+        list(APPEND ${TARGET_NAME}_DEPENDENCY_QT_MODULES Core Core5Compat Test)
         
         # find these Qt modules and link them to our own target
-        find_package(Qt5 COMPONENTS ${${TARGET_NAME}_DEPENDENCY_QT_MODULES} REQUIRED)
+        find_package(Qt6 COMPONENTS ${${TARGET_NAME}_DEPENDENCY_QT_MODULES} REQUIRED)
       
         foreach(QT_MODULE ${${TARGET_NAME}_DEPENDENCY_QT_MODULES})
-          target_link_libraries(${TARGET_NAME} Qt5::${QT_MODULE})
+          target_link_libraries(${TARGET_NAME} Qt6::${QT_MODULE})
         endforeach()
         target_link_libraries(${TARGET_NAME} ${CMAKE_THREAD_LIBS_INIT})
       

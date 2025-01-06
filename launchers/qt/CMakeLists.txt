@@ -108,7 +108,7 @@ if (APPLE)
   find_package(OpenSSL 1.1.0 REQUIRED)
 endif()
 
-find_package(Qt5 COMPONENTS Core Gui Qml Quick QuickControls2 Network REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Qml Quick QuickControls2 Network REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(QtStaticDeps REQUIRED)
 
@@ -120,15 +120,15 @@ generate_qrc(OUTPUT ${RESOURCES_QRC} PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources 
 add_custom_command(
   OUTPUT ${RESOURCES_RCC}
   DEPENDS ${RESOURCES_QRC} ${GENERATE_QRC_DEPENDS}
-  COMMAND "${_qt5Core_install_prefix}/bin/rcc"
+  COMMAND "${_Qt6Core_install_prefix}/bin/rcc"
   ARGS ${RESOURCES_QRC} -binary -o ${RESOURCES_RCC})
 
-QT5_ADD_RESOURCES(RES_SOURCES ${RESOURCES_QRC})
+Qt6_ADD_RESOURCES(RES_SOURCES ${RESOURCES_QRC})
 
 list(APPEND GENERATE_QRC_DEPENDS ${RESOURCES_RCC})
 add_custom_target(resources ALL DEPENDS ${GENERATE_QRC_DEPENDS})
 
-foreach(plugin ${Qt5Gui_PLUGINS})
+foreach(plugin ${Qt6Gui_PLUGINS})
   get_target_property(_loc ${plugin} LOCATION)
   set(plugin_libs ${plugin_libs} ${_loc})
 endforeach()
@@ -209,12 +209,12 @@ elseif (APPLE)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-  Qt5::Core
-  Qt5::Quick
-  Qt5::QuickControls2
-  Qt5::Qml
-  Qt5::Gui
-  Qt5::Network
+  Qt6::Core
+  Qt6::Quick
+  Qt6::QuickControls2
+  Qt6::Qml
+  Qt6::Gui
+  Qt6::Network
   ${Qt_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${plugin_libs}
@@ -228,24 +228,24 @@ if (WIN32)
     #"${SSL_DIR}/lib/libeay32.lib"
     #"${SSL_DIR}/lib/ssleay32.lib"
     ${OPENSSL_LIBRARIES}
-    "${_qt5Core_install_prefix}/qml/QtQuick.2/qtquick2plugin.lib"
-    "${_qt5Core_install_prefix}/qml/QtQuick/Controls.2/qtquickcontrols2plugin.lib"
-    "${_qt5Core_install_prefix}/qml/QtQuick/Templates.2/qtquicktemplates2plugin.lib")
+    "${_Qt6Core_install_prefix}/qml/QtQuick.2/qtquick2plugin.lib"
+    "${_Qt6Core_install_prefix}/qml/QtQuick/Controls.2/qtquickcontrols2plugin.lib"
+    "${_Qt6Core_install_prefix}/qml/QtQuick/Templates.2/qtquicktemplates2plugin.lib")
 elseif (APPLE)
   target_link_libraries(${PROJECT_NAME}
     ${OPENSSL_LIBRARIES}
-    "${_qt5Core_install_prefix}/qml/QtQuick.2/libqtquick2plugin.a"
-    "${_qt5Core_install_prefix}/qml/QtQuick/Controls.2/libqtquickcontrols2plugin.a"
-    "${_qt5Core_install_prefix}/qml/QtQuick/Templates.2/libqtquicktemplates2plugin.a"
-    "${_qt5Core_install_prefix}/plugins/platforms/libqcocoa.a")
+    "${_Qt6Core_install_prefix}/qml/QtQuick.2/libqtquick2plugin.a"
+    "${_Qt6Core_install_prefix}/qml/QtQuick/Controls.2/libqtquickcontrols2plugin.a"
+    "${_Qt6Core_install_prefix}/qml/QtQuick/Templates.2/libqtquicktemplates2plugin.a"
+    "${_Qt6Core_install_prefix}/plugins/platforms/libqcocoa.a")
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/deps/
-  ${Qt5Core_INCLUDE_DIRS}
-  ${Qt5Quick_INCLUDE_DIRS}
-  ${Qt5Gui_INCLUDE_DIRS}
-  ${Qt5Qml_INCLUDE_DIRS})
+  ${Qt6Core_INCLUDE_DIRS}
+  ${Qt6Quick_INCLUDE_DIRS}
+  ${Qt6Gui_INCLUDE_DIRS}
+  ${Qt6Qml_INCLUDE_DIRS})
 
 add_dependencies(${PROJECT_NAME} resources)
 

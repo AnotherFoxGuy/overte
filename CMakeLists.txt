@@ -315,7 +315,7 @@ if (ANDROID)
     add_definitions(-DANDROID_APP_INTERFACE)
   endif()
 else ()
-  set(PLATFORM_QT_COMPONENTS WebEngine Xml)
+  set(PLATFORM_QT_COMPONENTS WebEngineCore Xml)
 endif ()
 
 if (USE_GLES AND (NOT ANDROID AND NOT UNIX))
@@ -355,7 +355,7 @@ else()
 endif()
 
 foreach(PLATFORM_QT_COMPONENT ${PLATFORM_QT_COMPONENTS})
-  list(APPEND PLATFORM_QT_LIBRARIES "Qt5::${PLATFORM_QT_COMPONENT}")
+  list(APPEND PLATFORM_QT_LIBRARIES "Qt6::${PLATFORM_QT_COMPONENT}")
 endforeach()
 
 MESSAGE(STATUS "Use optimized IK:      " ${HIFI_USE_OPTIMIZED_IK})

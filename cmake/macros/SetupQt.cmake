@@ -19,8 +19,8 @@ function(get_sub_directories result curdir)
   set(${result} ${dirlist} PARENT_SCOPE)
 endfunction()
 
-function(calculate_qt5_version result _QT_DIR)
-  # All Qt5 packages have little "private" include directories named with the actual Qt version such as:
+function(calculate_Qt6_version result _QT_DIR)
+  # All Qt6 packages have little "private" include directories named with the actual Qt version such as:
   #   .../include/QtCore/5.15.2/QtCore/private
   # Sometimes we need to include these private headers for debug hackery.
   # Hence we find one of these directories and pick apart its path to determine the actual QT_VERSION.
@@ -29,7 +29,7 @@ function(calculate_qt5_version result _QT_DIR)
   else()
     set(_QT_CORE_DIR "${_QT_DIR}/include/QtCore")
     if(NOT EXISTS "${_QT_CORE_DIR}")
-      set(_QT_CORE_DIR "${_QT_DIR}/include/qt5/QtCore")
+      set(_QT_CORE_DIR "${_QT_DIR}/include/Qt6/QtCore")
     endif()
   endif()
   if(NOT EXISTS "${_QT_CORE_DIR}")
@@ -71,7 +71,7 @@ macro(setup_qt)
         # figure out where the qt dir is
         get_filename_component(QT_DIR "${QT_CMAKE_PREFIX_PATH}/../../" ABSOLUTE)
         set(QT_VERSION "unknown")
-        calculate_qt5_version(QT_VERSION "${QT_DIR}")
+        calculate_Qt6_version(QT_VERSION "${QT_DIR}")
         if (QT_VERSION STREQUAL "unknown")
             message(FATAL_ERROR "Could not determine QT_VERSION")
         endif()
@@ -83,14 +83,14 @@ macro(setup_qt)
             string(REPLACE \\ / QT_DIR ${QT_DIR})
         endif()
 
-        if(NOT EXISTS "${QT_CMAKE_PREFIX_PATH}/Qt5Core/Qt5CoreConfig.cmake")
-            message(FATAL_ERROR "Unable to locate Qt5CoreConfig.cmake in '${QT_CMAKE_PREFIX_PATH}'")
+        if(NOT EXISTS "${QT_CMAKE_PREFIX_PATH}/Qt6Core/Qt6CoreConfig.cmake")
+            message(FATAL_ERROR "Unable to locate Qt6CoreConfig.cmake in '${QT_CMAKE_PREFIX_PATH}'")
         endif()
 
         set(RCC_BINARY "${QT_DIR}/bin/rcc${CMAKE_EXECUTABLE_SUFFIX}")
 
         if(NOT EXISTS "${RCC_BINARY}")
-            set(RCC_BINARY "${QT_DIR}/bin/rcc-qt5${CMAKE_EXECUTABLE_SUFFIX}")
+            set(RCC_BINARY "${QT_DIR}/bin/rcc-Qt6${CMAKE_EXECUTABLE_SUFFIX}")
         endif()
 
         if(NOT EXISTS "${RCC_BINARY}")
