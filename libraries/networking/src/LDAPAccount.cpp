@@ -19,7 +19,13 @@
 #include <regex>
 #include <string>
 
+#ifdef WIN32
+#include <windows.h>
+#include <winldap.h>
+#pragma comment(lib, "Wldap32")
+#else
 #include <ldap.h>
+#endif
 
 QString LDAPAccount::ldapServerURL;
 QString LDAPAccount::ldapServerUserBase;
@@ -36,7 +42,12 @@ bool LDAPAccount::isValidCredentials(const QString& username, const QString& pas
     LDAP* ldapHandle = initialize(); // Initialize the ldap connection.
     if (ldapHandle == nullptr) {return false;}
     int loginResult = login(ldapHandle, username, password); // Log in
+    
+#ifdef WIN32
+    ldap_unbind(ldapHandle);
+#else
     ldap_unbind_ext(ldapHandle, nullptr, nullptr);
+#endif
 
     if (loginResult != LDAP_SUCCESS){
         // Login failed
@@ -76,7 +87,11 @@ std::vector<std::string> LDAPAccount::getRolesAsStrings(const QString& username,
 
     rc = ldap_search_ext_s(
         ldapHandle,
+#ifdef WIN32
+        usernameDN.toLocal8Bit().data(),
+#else
         usernameDN.toLocal8Bit().constData(),
+#endif
         LDAP_SCOPE_SUBTREE,
         nullptr,
         attrs,
@@ -132,15 +147,27 @@ LDAP* LDAPAccount::initialize(){
     ulong version = LDAP_VERSION3;
 
     // Initialize the LDAP library
+#ifdef WIN32
+    ldapHandle = ldap_init(readLDAPServerURL().toLocal8Bit().data(), LDAP_PORT);
+    int result;
+    if (ldapHandle != NULL) {
+        result = LdapGetLastError();
+#else
     int result = ldap_initialize(&ldapHandle, readLDAPServerURL().toLocal8Bit().constData());
     if (result != LDAP_SUCCESS) {
+#endif
         // LDAP could not be initialized for some reason.
         qDebug(networking) << "LDAP could not be initialized: Error: "<< result << ". "<< ldap_err2string(result);;
         return {};
     }
 
     // Set the LDAP version to 3
+#ifdef WIN32
+    result = ldap_set_option(ldapHandle, LDAP_OPT_VERSION, &version);
+#else
     result = ldap_set_option(ldapHandle, LDAP_OPT_PROTOCOL_VERSION, &version);
+#endif
+    
     if (result != LDAP_SUCCESS) {
         // Could not update the LDAP version for some reason.
         qDebug(networking) << "Could not update LDAP version";
@@ -175,7 +202,14 @@ int LDAPAccount::login(LDAP* ldapHandle, const QString& username, const QString&
     creds.bv_len = strlen(password.toLocal8Bit().constData());
 
     // Perform SASL bind
-    int saslBind = ldap_sasl_bind_s(ldapHandle, loginDN.toLocal8Bit().constData(), LDAP_SASL_SIMPLE, &creds, nullptr, nullptr, nullptr);
+#ifdef WIN32
+    int saslBind =
+        ldap_sasl_bind_s(ldapHandle, loginDN.toLocal8Bit().data(), nullptr, &creds, nullptr, nullptr, nullptr);
+#else
+    int saslBind =
+        ldap_sasl_bind_s(ldapHandle, loginDN.toLocal8Bit().constData(), LDAP_SASL_SIMPLE, &creds, nullptr, nullptr, nullptr);
+#endif
+   
     if (saslBind != LDAP_SUCCESS) {
         // Login info is invalid
         qDebug(networking) << "Failed trying to bind to LDAP. Status: " << saslBind << ". " << ldap_err2string(saslBind);

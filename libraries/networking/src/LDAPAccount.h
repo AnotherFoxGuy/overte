@@ -13,7 +13,12 @@
 #ifndef LDAPACCOUNT_H
 #define LDAPACCOUNT_H
 
+#ifdef WIN32
+#include <windows.h>
+#include <winldap.h>
+#else
 #include <ldap.h>
+#endif
 #include <QtCore/QObject>
 
 class LDAPAccount : public QObject {
