@@ -23,6 +23,7 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QFileSelector>
 #include <QtGui/QDesktopServices>
+#include <QStandardPaths>
 
 
 #include "../SharedLogging.h"
@@ -122,7 +123,7 @@ QString FileUtils::standardPath(QString subfolder) {
 #ifdef Q_OS_ANDROID
     QString path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #else
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 #endif
     if (!subfolder.startsWith("/")) {
         subfolder.prepend("/");

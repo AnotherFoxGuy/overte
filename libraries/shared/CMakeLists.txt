@@ -39,3 +39,27 @@ target_zlib()
 target_nsight()
 target_json()
 
+set_property(TARGET ${TARGET_NAME} PROPERTY AUTOMOC OFF) 
+
+get_target_property(BBBBBBBBBBBBBBBBBBB ${TARGET_NAME} AUTOMOC_MACRO_NAMES)
+
+message("$BBBBBBBBBBBBBBBBBBB ${BBBBBBBBBBBBBBBBBBB}")
+
+qt_wrap_cpp(${TARGET_NAME}
+    src/DebugDraw.h
+    src/GenericThread.h
+    src/LogHandler.h
+    src/PathUtils.h
+    src/Preferences.h
+    src/RegisteredMetaTypes.h
+    src/ResourceRequestObserver.h
+    src/SettingManager.h
+    src/ShutdownEventListener.h
+    src/shared/AbstractLoggerInterface.h
+    src/shared/Camera.h
+    src/shared/FileCache.h
+    src/shared/FileLogger.cpp
+    src/shared/FileLogger.h
+    src/shared/MiniPromises.h
+    src/shared/PlatformHelper.h
+)

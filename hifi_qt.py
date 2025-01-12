@@ -25,7 +25,7 @@ import functools
 #       No download, most special paths are turned off.
 #       We build in the same way a normal Qt program would.
 # 4.b - Using an user-provided Qt build in a custom directory.
-#       We just need to set the cmakePath to the right dir (qt5-install/lib/cmake)
+#       We just need to set the cmakePath to the right dir (qt6-install/lib/cmake)
 # 4.c - Using a premade package.
 #       We check the OS and distro and set qtUrl to the URL to download.
 #       After this, it works on the same pathway as 4.b.
@@ -38,7 +38,7 @@ import functools
 #    In the case of system Qt, SetupQt.cmake is a no-op. It runs but exits immediately.
 #
 # The format for a prebuilt qt is a package containing a top-level directory named
-# 'qt5-install', which contains the result of a "make install" from a build of the Qt source.
+# 'qt6-install', which contains the result of a "make install" from a build of the Qt source.
 
 print = functools.partial(print, flush=True)
 
@@ -57,7 +57,7 @@ endif()
     def __init__(self, args):
         self.args = args
         self.configFilePath = os.path.join(args.build_root, 'qt.cmake')
-        self.version = os.getenv('OVERTE_USE_QT_VERSION', '5.15.2')
+        self.version = os.getenv('OVERTE_USE_QT_VERSION', '6.8.1')
         self.assets_url = hifi_utils.readEnviromentVariableFromFile(args.build_root, 'EXTERNAL_BUILD_ASSETS')
 
         # OS dependent information
@@ -107,10 +107,10 @@ endif()
             # In the case of an user-provided directory, we just use the user-supplied directory.
             #
             # For a pre-built qt, however, we have to unpack it. The archive is required to contain
-            # a qt5-install directory in it.
+            # a qt6-install directory in it.
 
             self.path = os.path.expanduser("~/overte-files/qt")
-            self.fullPath = os.path.join(self.path, 'qt5-install')
+            self.fullPath = os.path.join(self.path, 'qt6-install')
             self.cmakePath = os.path.join(self.fullPath, 'lib', 'cmake')
 
             if (not os.path.isdir(self.path)):
@@ -123,11 +123,11 @@ endif()
         if not system_qt:
             if qt_found:
                 # Sanity check, ensure we have a good cmake directory
-                qt5_dir = os.path.join(self.cmakePath, "Qt5")
-                if not os.path.isdir(qt5_dir):
-                    raise Exception("Failed to find Qt5 directory under " + self.cmakePath + ". There should be a " + qt5_dir)
+                qt6_dir = os.path.join(self.cmakePath, "qt6")
+                if not os.path.isdir(qt6_dir):
+                    raise Exception("Failed to find qt6 directory under " + self.cmakePath + ". There should be a " + qt6_dir)
                 else:
-                    print("Qt5 check passed, found " + qt5_dir)
+                    print("qt6 check passed, found " + qt6_dir)
 
             # I'm not sure why this is needed. It's used by hifi_singleton.
             # Perhaps it stops multiple build processes from interferring?
@@ -140,13 +140,13 @@ endif()
 
         if qt_found:
             if not self.args.quiet:
-                print("Found pre-built Qt5")
+                print("Found pre-built qt6")
             return
 
         if 'Windows' == system:
-            self.qtUrl = self.assets_url + '/dependencies/qt5/qt5-install-5.15.10-2023.10.02-windows-x86_64.tar.xz'
+            self.qtUrl = self.assets_url + '/dependencies/qt6/qt6-install-5.15.10-2023.10.02-windows-x86_64.tar.xz'
         elif 'Darwin' == system:
-            self.qtUrl = self.assets_url + '/dependencies/vcpkg/qt5-install-5.15.2-macos.tar.gz'
+            self.qtUrl = self.assets_url + '/dependencies/vcpkg/qt6-install-5.15.2-macos.tar.gz'
         elif 'Linux' == system:
             import distro
             cpu_architecture = platform.machine()
@@ -157,7 +157,7 @@ endif()
                 u_major = int( distro.major_version() or '0' )
                 if distro.id() == 'ubuntu' or distro.id() == 'linuxmint':
                     if (distro.id() == 'ubuntu' and u_major == 20) or distro.id() == 'linuxmint' and u_major == 20:
-                        self.qtUrl = self.assets_url + '/dependencies/qt5/qt5-install-5.15.16-2024.12.14-kde_32be154325bfba3ad2ba8bf75dad702f3588e8d3-ubuntu-20.04-amd64.tar.xz'
+                        self.qtUrl = self.assets_url + '/dependencies/qt6/qt6-install-5.15.16-2024.12.14-kde_32be154325bfba3ad2ba8bf75dad702f3588e8d3-ubuntu-20.04-amd64.tar.xz'
                     elif (distro.id() == 'ubuntu' and u_major > 20) or (distro.id() == 'linuxmint' and u_major > 20):
                         self.__no_qt_package_error()
                     else:
@@ -171,7 +171,7 @@ endif()
                     u_major = int( distro.major_version() )
 
                     if u_major == 20:
-                        self.qtUrl = self.assets_url + '/dependencies/qt5/qt5-install-5.15.9-2023.05.21-kde_fb3ec282151b1ee281a24f0545a40ac6438537c2-ubuntu-20.04-aarch64.tar.xz'
+                        self.qtUrl = self.assets_url + '/dependencies/qt6/qt6-install-5.15.9-2023.05.21-kde_fb3ec282151b1ee281a24f0545a40ac6438537c2-ubuntu-20.04-aarch64.tar.xz'
                     elif u_major > 20:
                         self.__no_qt_package_error()
                     else:

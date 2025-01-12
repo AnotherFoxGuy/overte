@@ -39,7 +39,7 @@ function(calculate_Qt6_version result _QT_DIR)
   get_sub_directories(subdirs ${_QT_CORE_DIR})
 
   foreach(subdir ${subdirs})
-    string(REGEX MATCH "5.[0-9]+.[0-9]+$" _QT_VERSION ${subdir})
+    string(REGEX MATCH "6.[0-9]+.[0-9]+$" _QT_VERSION ${subdir})
     if (NOT "${_QT_VERSION}" STREQUAL "")
       # found it!
       set(${result} "${_QT_VERSION}" PARENT_SCOPE)
@@ -71,7 +71,7 @@ macro(setup_qt)
         # figure out where the qt dir is
         get_filename_component(QT_DIR "${QT_CMAKE_PREFIX_PATH}/../../" ABSOLUTE)
         set(QT_VERSION "unknown")
-        calculate_Qt6_version(QT_VERSION "${QT_DIR}")
+        calculate_qt6_version(QT_VERSION "${QT_DIR}")
         if (QT_VERSION STREQUAL "unknown")
             message(FATAL_ERROR "Could not determine QT_VERSION")
         endif()

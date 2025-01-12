@@ -13,6 +13,7 @@
 #define hifi_SettingHelpers_h
 
 #include <QSettings>
+#include <QIODevice>
 
 extern const QSettings::Format JSON_FORMAT;
 

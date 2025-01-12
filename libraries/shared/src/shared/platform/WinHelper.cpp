@@ -27,7 +27,7 @@ public:
         }
     }
 
-    bool nativeEventFilter(const QByteArray& eventType, void* message, long*) override {
+    bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr*) override {
         MSG* msg = static_cast<MSG*>(message);
         if (msg->message == WM_POWERBROADCAST) {
             switch (msg->wParam) {

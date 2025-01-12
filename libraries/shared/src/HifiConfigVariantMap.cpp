@@ -32,7 +32,7 @@ QVariantMap HifiConfigVariantMap::mergeCLParametersWithJSONConfig(const QStringL
     // Take anything with a dash in it as a key, and the values after it as the value.
 
     const QString DASHED_KEY_REGEX_STRING = "(^-{1,2})([\\w-]+)";
-    QRegExp dashedKeyRegex(DASHED_KEY_REGEX_STRING);
+    QRegularExpression dashedKeyRegex(DASHED_KEY_REGEX_STRING);
 
     int keyIndex = argumentList.indexOf(dashedKeyRegex);
     int nextKeyIndex = 0;
@@ -43,7 +43,8 @@ QVariantMap HifiConfigVariantMap::mergeCLParametersWithJSONConfig(const QStringL
     while (keyIndex != -1) {
         if (argumentList[keyIndex] != CONFIG_FILE_OPTION) {
             // we have a key - look forward to see how many values associate to it
-            QString key = dashedKeyRegex.cap(2);
+            QRegularExpressionMatch match = dashedKeyRegex.match(argumentList[keyIndex]);
+            QString key = match.captured(2);
 
             nextKeyIndex = argumentList.indexOf(dashedKeyRegex, keyIndex + 1);
 
@@ -86,9 +87,12 @@ QVariantMap HifiConfigVariantMap::mergeCLParametersWithJSONConfig(const QStringL
                                                              QCoreApplication::applicationName());
     }
 
-
-
-    return mergedMap;
+    // Convert QMultiMap to QVariantMap
+    QVariantMap finalMap;
+    for (auto it = mergedMap.begin(); it != mergedMap.end(); ++it) {
+        finalMap[it.key()] = it.value();
+    }
+    return finalMap;
 }
 
 void HifiConfigVariantMap::loadConfig() {
