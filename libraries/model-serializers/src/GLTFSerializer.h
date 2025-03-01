@@ -58,6 +58,9 @@ private:
     void setHFMMaterial(HFMMaterial& hfmMat, const cgltf_material& material);
     HFMTexture getHFMTexture(const cgltf_texture *texture);
 
+    // VRM Support
+    bool loadVRMData(HFMModel& hfmModel, const cgltf_extension& extension);
+
     bool findNodeInPointerArray(const cgltf_node* nodePointer, cgltf_node** nodes, size_t arraySize, size_t& index);
 
     bool findAttribute(const QString& name, const cgltf_attribute* attributes, size_t numAttributes, size_t& index);

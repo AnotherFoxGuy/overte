@@ -93,6 +93,27 @@ macro (setup_testcase_dependencies)
     add_dependencies(${TARGET_NAME} gltf_samples)
   endif()
 
+  if("${TARGET_NAME}" STREQUAL "model-serializers-VRMTests")
+
+    ExternalProject_Add(
+      seed_san
+      PREFIX "models"
+      URL "https://github.com/vrm-c/vrm-specification/raw/282edef7b8de6044d782afdab12b14bd8ccf0630/samples/Seed-san/vrm/Seed-san.vrm"
+      URL_HASH MD5=aa93707c002e0394df7cf17f3d5b6247
+      DOWNLOAD_NO_EXTRACT true CONFIGURE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND ""
+    )
+
+    ExternalProject_Add(
+      constraint_twist_sample
+      PREFIX "models"
+      URL "https://github.com/vrm-c/vrm-specification/raw/282edef7b8de6044d782afdab12b14bd8ccf0630/samples/VRM1_Constraint_Twist_Sample/vrm/VRM1_Constraint_Twist_Sample.vrm"
+      URL_HASH MD5=b36a6fbb65316d5684de896dedee4f26
+      DOWNLOAD_NO_EXTRACT true CONFIGURE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND ""
+    )
+
+    add_dependencies(${TARGET_NAME} seed_san)
+    add_dependencies(${TARGET_NAME} constraint_twist_sample)
+  endif()
 
   package_libraries_for_deployment()
 endmacro ()

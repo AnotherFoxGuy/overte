@@ -202,10 +202,17 @@ HFMModel::Pointer GLTFSerializer::read(const hifi::ByteArray& data, const hifi::
         }
     }
 
-
     auto hfmModelPtr = std::make_shared<HFMModel>();
     HFMModel& hfmModel = *hfmModelPtr;
     buildGeometry(hfmModel, mapping, _url);
+
+    for (size_t i = 0; i < _data->data_extensions_count; i++) {
+        auto& extension = _data->data_extensions[i];
+        qCDebug(modelformat) << "Extension found: " << extension.name;
+        if (strcmp(extension.name, "VRMC_vrm") == 0 && extension.data != nullptr) {
+            loadVRMData(hfmModel, extension);
+        }
+    }
 
     return hfmModelPtr;
 }

@@ -131,3 +131,4 @@ interface/compiledResources
 # Act local GitHub Actions
 .secret
 
+.cache/
