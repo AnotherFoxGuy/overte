@@ -302,6 +302,8 @@ macro(AUTOSCRIBE_SHADER_LIB)
 
             GENERATE_DEFINES_LIST("${AUTOSCRIBE_PROGRAM_DEFINES}")
 
+            message("AAAAAAAAAAAAAAAAAAAAA ${PROGRAM_NAME} ${AUTOSCRIBE_PROGRAM_DEFINES}")
+
             string(CONCAT PROGRAM_ENUMS "${PROGRAM_ENUMS}" "${PROGRAM_NAME} = (${AUTOSCRIBE_PROGRAM_VERTEX} << 16) | ${AUTOSCRIBE_PROGRAM_FRAGMENT},\n")
             string(CONCAT SHADER_PROGRAMS_ARRAY "${SHADER_PROGRAMS_ARRAY} ${SHADER_NAMESPACE}::program::${PROGRAM_NAME},\n")
 
@@ -313,14 +315,17 @@ macro(AUTOSCRIBE_SHADER_LIB)
                 # (because the shaders without them will have already been generated)
                 string(REPLACE ":v" "" VERTEX_DEFINES "${ORIG_DEFINES}")
                 string(FIND "${ORIG_DEFINES}" ":f" HAS_FRAGMENT)
+
                 if (HAS_FRAGMENT EQUAL -1)
                     set(DEFINES "${VERTEX_DEFINES}")
                     set(SHADER_LIST "")
                     set(SHADER_FILE "${PROGRAM_FOLDER}/${VERTEX_NAME}.slv")
+                    #message("AAAAAAAAAAAAAAAAAAAAA B ${SHADER_FILE}")
                     if (NOT EXISTS "${SHADER_FILE}")
                         set(SHADER_FILE "${PROGRAM_FOLDER}/../${VERTEX_NAME}.slv")
                     endif()
                     find_file(SHADER_FILE "" PATHS "${PROGRAM_FOLDER}" PATH_SUFFIXES ".." NO_DEFAULT_PATH)
+                    #message("AAAAAAAAAAAAAAAAAAAAA E ${SHADER_FILE}")
                     AUTOSCRIBE_SHADER(${ALL_SHADER_HEADERS})
                     string(CONCAT VERTEX_ENUMS "${VERTEX_ENUMS}" "${SHADER_LIST}")
                 else()
