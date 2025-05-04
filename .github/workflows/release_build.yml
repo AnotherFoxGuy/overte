@@ -101,10 +101,15 @@ jobs:
         Invoke-WebRequest https://build-deps.overte.org/conan/nsis-overte-plugins/NSIS-hifi-plugins-1.0.zip -OutFile NSIS-hifi-plugins.zip
         Expand-Archive -LiteralPath 'NSIS-hifi-plugins.zip' -DestinationPath 'C:/Program Files (x86)/'
 
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+      with:
+        cache_packages: true
+
     - name: Install Python modules
       if: startsWith(matrix.os, 'windows') || startsWith(matrix.os, 'macOS')
       shell: bash
-      run: $PYTHON_EXEC -m pip install boto3 PyGithub conan
+      run: $PYTHON_EXEC -m pip install boto3 PyGithub
 
     - name: Prepare Conan Build Environment
       uses: ./.github/actions/setup-conan
@@ -129,6 +134,10 @@ jobs:
       run: |
         conan list --graph=build.json --graph-binaries=build --format=json > pkglist.json
         conan upload --list=pkglist.json -r=overte -c
+
+    - name: Cleanup Conan dependencies
+      run: conan cache clean "*" -sbd
+      shell: bash
 
     - name: Configure CMake
       shell: bash
