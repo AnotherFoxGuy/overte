@@ -271,6 +271,11 @@ jobs:
         submodules: false
         fetch-depth: 1
 
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+      with:
+        cache_packages: true
+
     - name: Prepare Conan Build Environment
       uses: ./.github/actions/setup-conan
 
@@ -287,6 +292,10 @@ jobs:
         # Token for uploading dependency source backups.
         CONAN_BUILD_DEPENDENCIES_BACKUP_UPLOAD_TOKEN: ${{ secrets.CONAN_BUILD_DEPENDENCIES_BACKUP_UPLOAD_TOKEN }}
       run: conan cache backup-upload || echo "Credentials cannot be accessed on remote Pull Request builds. Continuing…"
+
+    - name: Cleanup Conan dependencies
+      run: conan cache clean "*" -sbd
+      shell: bash
 
     - name: Configure CMake
       shell: bash

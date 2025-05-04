@@ -177,13 +177,6 @@ jobs:
         submodules: false
         fetch-depth: 1
 
-    - name: Cache conan
-      id: conan-cache
-      uses: actions/cache@v4
-      with:
-        key: conan-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('conanfile.py') }}
-        path: ~/.conan2/
-
     - name: Install dependencies
       shell: bash
       if: startsWith(matrix.os, 'Ubuntu') || contains(matrix.os, 'Debian') || startsWith(matrix.os, 'macOS')
@@ -221,10 +214,10 @@ jobs:
         Invoke-WebRequest https://build-deps.overte.org/conan/nsis-overte-plugins/NSIS-hifi-plugins-1.0.zip -OutFile NSIS-hifi-plugins.zip
         Expand-Archive -LiteralPath 'NSIS-hifi-plugins.zip' -DestinationPath 'C:/Program Files (x86)/'
 
-    - name: Install Python modules
-      if: startsWith(matrix.os, 'Windows') || startsWith(matrix.os, 'macOS')
-      shell: bash
-      run: $PYTHON_EXEC -m pip install boto3 PyGithub conan
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+      with:
+        cache_packages: true
 
     - name: Prepare Conan Build Environment
       uses: ./.github/actions/setup-conan
@@ -247,13 +240,6 @@ jobs:
     - name: Cleanup Conan dependencies
       run: conan cache clean "*" -sbd
       shell: bash
-
-    - name: Save Conan cache
-      if: always() && steps.conan-cache.cache-hit != 'true'
-      uses: actions/cache/save@v4
-      with:
-        key: conan-${{ matrix.os }}-${{ matrix.arch }}-${{ hashFiles('conanfile.py') }}
-        path: ~/.conan2/
 
     - name: Configure CMake
       shell: bash
