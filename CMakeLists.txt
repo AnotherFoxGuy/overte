@@ -26,7 +26,12 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarc
     set(GLES_OPTION ON)
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+if (WIN32)
+    # Building with webrtc-audio-processing on Windows fails on cppstd 14.
+    set(CMAKE_CXX_STANDARD 17)
+else ()
+    set(CMAKE_CXX_STANDARD 14)
+endif ()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set our OS X deployment target
