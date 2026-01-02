@@ -1,0 +1,16 @@
+[[actions]]
+name = "Start Overte"
+path = "interface.exe"
+
+[[actions]]
+name = "Start Overte (Desktop)"
+path = "interface.exe"
+args = ["--disableDisplayPlugins \"OpenVR (Vive)\"", "--disableInputPlugins \"OpenVR (Vive)\""]
+
+[[actions]]
+name = "Start Overte (OpenXR)"
+path = "interface.exe"
+args = ["--useExperimentalXR"]
+
+[[prereqs]]
+name = "vcredist-v14-x64"

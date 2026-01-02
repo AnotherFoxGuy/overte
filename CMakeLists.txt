@@ -308,6 +308,24 @@ if (OVERTE_BUILD_TESTS)
   endif()
 endif()
 
+# Install the itch.io app manifests
+# https://itch.io/docs/itch/integrating/manifest.html
+if (WIN32)
+    install(
+        FILE "${CMAKE_SOURCE_DIR}/tools/itch/windows.itch.toml"
+        DESTINATION "."
+        RENAME ".itch.toml"
+        COMPONENT ${CLIENT_COMPONENT}
+    )
+elseif (UNIX)
+    install(
+        DIRECTORY "${CMAKE_SOURCE_DIR}/tools/itch/linux.itch.toml"
+        DESTINATION "."
+        RENAME ".itch.toml"
+        COMPONENT ${CLIENT_COMPONENT}
+    )
+endif()
+
 if (OVERTE_BUILD_INSTALLER)
   if (UNIX)
     install(

@@ -1,0 +1,13 @@
+[[actions]]
+name = "Start Overte"
+path = "./interface"
+
+[[actions]]
+name = "Start Overte (Desktop)"
+path = "./interface"
+args = ["--disableDisplayPlugins \"OpenVR (Vive)\"",  "--disableInputPlugins \"OpenVR (Vive)\""]
+
+[[actions]]
+name = "Start Overte (OpenXR)"
+path = "./interface"
+args = ["--useExperimentalXR"]
